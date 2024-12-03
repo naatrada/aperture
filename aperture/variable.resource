@@ -10,3 +10,4 @@ ${invalidpassword}    secret_sauce121
 ${fname}    Natty
 ${lname}    Test
 ${zipcode}    50000 
+${cart_count}    0

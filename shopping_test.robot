@@ -1,6 +1,7 @@
 *** Settings ***
 Library    SeleniumLibrary
 Library    Collections
+Library    BuiltIn
 Resource   aperture/variable.resource
 
 *** Variables ***
@@ -45,34 +46,32 @@ login success
     Click Button    id=login-button
     page Should Contain    Products
 check cart0    #check that there is 0 amount for start shopping
-    Element Should Contain    class=shopping_cart_link       !=1
-
-pick first item to cart
-    click button    id=add-to-cart-sauce-labs-bolt-t-shirt
-    Element Should Contain    class=shopping_cart_link    1
-pick second item to cart
-    Scroll Element Into View    id=item_3_img_link
-    click button    name=add-to-cart-test.allthethings()-t-shirt-(red)
-    Element Should Contain    class=shopping_cart_link    2
-pick third item to cart
-    Scroll Element Into View    class=inventory_item_img
-    click button    name=add-to-cart-sauce-labs-backpack
-    Element Should Contain    class=shopping_cart_link    3
-pick fourth item to cart
-    Click button    name=add-to-cart-sauce-labs-bike-light
-    Element Should Contain    class=shopping_cart_link    4
+    Log To Console   Verify that there is nothing on a cart and overview page
+    Element Should not Be Visible    class=shopping_cart_badge   
+    Click Element    class=shopping_cart_link  
+    Page Should Not Contain Element    class=inventory_item_name
+    Go Back
+pick items to a cart  
+    [Arguments]    ${item_id}
+    ${cart_count}=    Evaluate    ${cart_count} + 1
+    Set Global Variable    ${cart_count}
+    Click Button    id=${item_id}
+    Log To Console    Cart count after adding: ${cart_count}
+    Element Should Contain    class=shopping_cart_link    ${cart_count}
 remove the fourth item
+    Log To Console   Verify that users can remove a product
     Click button    id=remove-sauce-labs-bike-light
-    Element Should Contain    class=shopping_cart_link    3
+    Element Should Contain    class=shopping_cart_link    ${cart_count-1}
 check the cart    
     click Element    class=shopping_cart_link
     page should contain    Your Cart
 check items in cart
+    Log To Console   verify that final products are correct
     Page Should Contain    Sauce Labs Bolt T-Shirt
     Page Should Contain    Test.allTheThings() T-Shirt (Red)
     Page Should Contain    Sauce Labs Backpack
 check out fail by let every field empty
-    
+    Log To Console   verify that users can not checkout with filling incomplete data
     Click Button    id=checkout
     Click Button    id=continue
     Page Should Contain    Error: First Name is required
@@ -101,7 +100,7 @@ check out fail by let zipcode field empty
     Click Button    id=continue
     Page Should Contain    Error: Postal Code is required
 check out success
-   
+    Log To Console  Veify that users can checkout when fill complete data
     Wait Until Page Contains    Checkout: Your Information
     Input Text    id=first-name    ${fname}
     Input Text    id=last-name    ${lname}
@@ -123,11 +122,11 @@ first page
     # login fail by invalid password
     login success
 get something to cart
-    # check cart0
-    pick first item to cart
-    pick second item to cart
-    pick third item to cart
-    pick fourth item to cart
+    check cart0
+    pick items to a cart    add-to-cart-sauce-labs-bolt-t-shirt
+    pick items to a cart    add-to-cart-test.allthethings()-t-shirt-(red)
+    pick items to a cart    add-to-cart-sauce-labs-backpack
+    pick items to a cart    add-to-cart-sauce-labs-bike-light
 remove something
     remove the fourth item
 check cart  
