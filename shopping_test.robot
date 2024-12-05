@@ -4,17 +4,11 @@ Library    Collections
 Library    BuiltIn
 Resource   aperture/variable.resource
 
-*** Variables ***
-@{TEST_RESULTS}
 
 *** Keywords ***
 go to website
-    # Set Selenium Speed    1
     Open Browser    https://www.saucedemo.com/   chrome
     Maximize Browser Window
-    ${status}=    Run Keyword And Return Status    Should Be Equal    1    1
-    Append To List    ${TEST_RESULTS}    Test Case 1: ${status}
-    Log    @{TEST_RESULTS}
 login fail by not fill username password
     Click Button    id=login-button
     Page Should Contain    Epic sadface: Username is required
@@ -83,7 +77,6 @@ check out fail by let firstname field empty
     Click Button    id=continue
     Page Should Contain    Error: First Name is required
 check out fail by let lastname field empty
-    # Set Selenium Speed    1
     Go back
     Click Button    id=checkout
     Input Text    id=first-name    ${fname}
@@ -92,7 +85,6 @@ check out fail by let lastname field empty
     Page Should Contain    Error: Last Name is required
     
 check out fail by let zipcode field empty
-    # Set Selenium Speed    1
     Go back
     Click Button    id=checkout
     Input Text    id=first-name    ${fname}
@@ -116,10 +108,10 @@ finish
 ** Test Cases ***
 first page
     go to website
-    # login fail by not fill username password
-    # login fail by invalid username and invalid password
-    # login fail by invalid username
-    # login fail by invalid password
+    login fail by not fill username password
+    login fail by invalid username and invalid password
+    login fail by invalid username
+    login fail by invalid password
     login success
 get something to cart
     check cart0
